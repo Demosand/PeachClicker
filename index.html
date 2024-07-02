@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Кликер по персику</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      background-color: #222;
+      font-family: 'Arial', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      overflow: hidden;
+      color: #eee;
+      touch-action: manipulation;
+    }
+
+    #container {
+      text-align: center;
+      position: relative;
+      background-color: #333;
+      padding: 40px 20px;
+      border-radius: 20px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      max-width: 95%; 
+    }
+
+    #click-count {
+      font-size: 5em;
+      margin-bottom: 20px;
+      text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.2);
+      color: #ffbb33;
+    }
+
+    #game-area {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      margin-bottom: 20px;
+    }
+
+    #peach-image {
+      width: 200px;
+      height: 200px;
+      cursor: pointer;
+      transition: transform 0.1s ease;
+      user-select: none;
+      -webkit-user-drag: none;
+      margin-right: 20px;
+    }
+
+    #peach-image:hover {
+      transform: scale(1.05);
+    }
+
+    #peach-image.disabled {
+      filter: grayscale(100%);
+      cursor: default;
+    }
+
+    #click-limit {
+      width: 100%;
+      height: 20px;
+      background-color: #444;
+      border-radius: 15px;
+      overflow: hidden;
+      margin: 20px auto;
+      box-shadow: inset 2px 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    #click-limit-fill {
+      height: 100%;
+      background-color: #f0ad4e;
+      width: 100%;
+      transition: width 0.2s cubic-bezier(0.4, 0, 1, 1);
+      border-radius: 15px;
+    }
+
+    .sparkle {
+      position: absolute;
+      background-color: rgba(255, 215, 0, 0.8);
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      opacity: 0;
+      animation: sparkleAnimation 0.8s ease-out;
+      pointer-events: none;
+    }
+
+    @keyframes sparkleAnimation {
+      0% {
+        opacity: 0;
+        transform: scale(0) translate(0, 0);
+      }
+
+      50% {
+        opacity: 1;
+        transform: scale(1) translate(5px, -5px);
+      }
+
+      100% {
+        opacity: 0;
+        transform: scale(1.5) translate(10px, -10px);
+      }
+    }
+
+    #shop-btn {
+      cursor: pointer;
+      transition: transform 0.1s ease;
+    }
+
+    #shop-btn:hover {
+      transform: scale(1.1);
+    }
+
+    #shop {
+      display: none;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: #333;
+      padding: 50px;
+      border-radius: 10px;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
+      z-index: 10;
+      width: 80%;
+      max-width: 500px;
+    }
+
+    #shop h2 {
+      margin-top: 0;
+      color: #ffbb33;
+    }
+
+    .upgrade {
+      background-color: #444;
+      padding: 30px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      text-align: left;
+    }
+
+    .upgrade h3 {
+      margin-top: 0;
+      color: #f0ad4e;
+    }
+
+    .upgrade .cost {
+      font-size: 1.2em;
+      color: #ffbb33;
+    }
+
+    #close-shop {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      cursor: pointer;
+      font-size: 1.5em;
+    }
+
+    .buy-button {
+      background-color: #f0ad4e;
+      color: #222;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1em;
+      transition: background-color 0.3s;
+    }
+
+    .buy-button:hover {
+      background-color: #d9a444;
+    }
+
+    /* Стили для мобильных устройств */
+    @media (max-width: 600px) {
+      #container {
+        padding: 40px 20px;
+        width: 96%; 
+        box-sizing: border-box; 
+      }
+
+      #click-count {
+        font-size: 7em;
+        margin-bottom: 30px;
+      }
+
+      #game-area {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      #peach-image {
+        width: 75vw;
+        height: 75vw;
+        margin-right: 0;
+        margin-bottom: 30px;
+      }
+
+      #shop-btn {
+        width: 70px; 
+        height: 70px;
+      }
+
+      .upgrade {
+        padding: 30px;
+        font-size: 1.3em; 
+      }
+
+      .buy-button {
+        font-size: 1.3em;
+        padding: 15px 25px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="container">
+    <div id="click-count">0</div>
+    <div id="click-limit">
+      <div id="click-limit-fill"></div>
+    </div>
+
+    <div id="game-area">
+      <img id="peach-image" src="1.png" alt="Персик">
+      <img id="shop-btn" src="shop.png" alt="Магазин" width="60" height="60">
+    </div>
+
+    <div id="shop">
+      <h2>Магазин</h2>
+      <span id="close-shop">×</span>
+      <div class="upgrade" id="click-multiplier">
+        <h3>Умножитель кликов</h3>
+        <p>Увеличивает количество кликов за нажатие.</p>
+        <p class="level">Текущий уровень: <span id="multiplier-level">1</span></p>
+        <p class="cost">Цена: <span id="multiplier-cost">5000</span> кликов</p>
+        <button class="buy-button" id="buy-multiplier">Купить</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const peachImage = document.getElementById('peach-image');
+    const clickCount = document.getElementById('click-count');
+    const clickLimitFill = document.getElementById('click-limit-fill');
+    const shopBtn = document.getElementById('shop-btn');
+    const shop = document.getElementById('shop');
+    const closeShop = document.getElementById('close-shop');
+    const buyMultiplierBtn = document.getElementById('buy-multiplier');
+    const multiplierLevel = document.getElementById('multiplier-level');
+    const multiplierCostSpan = document.getElementById('multiplier-cost');
+
+    const clickLimit = 1000;
+    let clicks = 0;
+    let currentClicks = clickLimit;
+    let clickMultiplier = 1;
+    let multiplierCost = 5000;
+    let lastTime = Date.now(); 
+
+    loadProgress();
+    restoreClicks();
+
+    peachImage.addEventListener('click', (event) => {
+      if (currentClicks > 0) {
+        clicks += clickMultiplier;
+        currentClicks--;
+        updateGame();
+        createSparkle(event.clientX, event.clientY);
+        saveProgress();
+      }
+    });
+
+    shopBtn.addEventListener('click', () => {
+      shop.style.display = 'block';
+    });
+
+    closeShop.addEventListener('click', () => {
+      shop.style.display = 'none';
+    });
+
+    buyMultiplierBtn.addEventListener('click', () => {
+      if (clicks >= multiplierCost) {
+        clicks -= multiplierCost;
+        clickMultiplier++;
+        multiplierCost += Math.round(multiplierCost * 0.5);
+        updateGame();
+        saveProgress();
+      }
+    });
+
+    function createSparkle(x, y) {
+      const sparkle = document.createElement('div');
+      sparkle.classList.add('sparkle');
+      sparkle.style.left = x - 5 + 'px';
+      sparkle.style.top = y - 5 + 'px';
+      document.body.appendChild(sparkle);
+      setTimeout(() => {
+        sparkle.remove();
+      }, 800);
+    }
+
+    function updateClickLimit() {
+      const percentage = (currentClicks / clickLimit) * 100;
+      clickLimitFill.style.width = percentage + '%';
+      if (currentClicks === 0) {
+        peachImage.classList.add('disabled');
+      } else {
+        peachImage.classList.remove('disabled');
+      }
+    }
+
+    setInterval(() => {
+      restoreClicks(); 
+    }, 2000);
+
+    function updatePeachImage() {
+      if (clicks < 100) {
+        peachImage.src = "1.png";
+      } else if (clicks < 1000) {
+        peachImage.src = "2.png";
+      } else if (clicks < 10000) {
+        peachImage.src = "3.png";
+      } else {
+        peachImage.src = "4.png";
+      }
+    }
+
+    function updateGame() {
+      clickCount.textContent = clicks;
+      multiplierLevel.textContent = clickMultiplier;
+      multiplierCostSpan.textContent = multiplierCost;
+      updatePeachImage();
+      updateClickLimit();
+    }
+
+    function saveProgress() {
+      localStorage.setItem('clicks', clicks);
+      localStorage.setItem('clickMultiplier', clickMultiplier);
+      localStorage.setItem('multiplierCost', multiplierCost);
+      localStorage.setItem('currentClicks', currentClicks);
+      localStorage.setItem('lastTime', lastTime);
+    }
+
+    function loadProgress() {
+      clicks = parseInt(localStorage.getItem('clicks')) || 0;
+      clickMultiplier = parseInt(localStorage.getItem('clickMultiplier')) || 1;
+      multiplierCost = parseInt(localStorage.getItem('multiplierCost')) || 5000;
+      currentClicks = parseInt(localStorage.getItem('currentClicks')) || clickLimit;
+      lastTime = parseInt(localStorage.getItem('lastTime')) || Date.now();
+      updateGame();
+    }
+
+    function restoreClicks() {
+      const now = Date.now();
+      const timeDiff = now - lastTime;
+      const clicksToRestore = Math.floor(timeDiff / 2000) * 10; 
+
+      // Обновляем lastTime только если восстанавливаем клики
+      if (currentClicks < clickLimit) {
+        currentClicks = Math.min(currentClicks + clicksToRestore, clickLimit);
+        lastTime = now;
+      }
+
+      updateClickLimit();
+    }
+
+    updateClickLimit();
+  </script>
+</body>
+</html>
