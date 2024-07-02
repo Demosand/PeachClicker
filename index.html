@@ -111,6 +111,7 @@
     #shop-btn {
       cursor: pointer;
       transition: transform 0.1s ease;
+      margin-top: -20px; /* Поднимаем иконку магазина на 20px */
     }
 
     #shop-btn:hover {
@@ -182,12 +183,12 @@
     @media (max-width: 600px) {
       #container {
         padding: 40px 20px;
-        width: 96%; 
+        width: 96%;
         box-sizing: border-box; 
       }
 
       #click-count {
-        font-size: 7em;
+        font-size: 7em; 
         margin-bottom: 30px;
       }
 
@@ -197,15 +198,16 @@
       }
 
       #peach-image {
-        width: 75vw;
-        height: 75vw;
+        width: 75vw; 
+        height: 75vw; 
         margin-right: 0;
         margin-bottom: 30px;
       }
 
       #shop-btn {
-        width: 70px; 
+        width: 70px;
         height: 70px;
+        margin-top: -30px; 
       }
 
       .upgrade {
@@ -361,12 +363,10 @@
       const timeDiff = now - lastTime;
       const clicksToRestore = Math.floor(timeDiff / 2000) * 10; 
 
-      // Обновляем lastTime только если восстанавливаем клики
       if (currentClicks < clickLimit) {
         currentClicks = Math.min(currentClicks + clicksToRestore, clickLimit);
         lastTime = now;
       }
-
       updateClickLimit();
     }
 
