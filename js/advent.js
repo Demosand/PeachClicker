@@ -1,5 +1,5 @@
 /* ===================================================
-   ADVENT CALENDAR — Apple Card Holographic Scratch-Off
+   ADVENT CALENDAR — Subtle Tilt + Easy Scratch
    =================================================== */
 
 const adventApp = (() => {
@@ -13,7 +13,6 @@ const adventApp = (() => {
         { day: 7, title: 'Новый сервер Швеция во всех тарифах', promo: 'DAY7-SWEDEN', icon: '🇸🇪' }
     ];
 
-    // BUG FIX: start with day 1 unlocked by default so it doesn't say "Приходи завтра" everywhere
     let unlockedDay = Math.max(1, parseInt(localStorage.getItem('adventUnlockedDay')) || 1);
 
     // ─── Build grid ───────────────────────────────────
@@ -32,10 +31,10 @@ const adventApp = (() => {
 
             const card = mk('div', `advent-card${!isUnlocked ? ' locked' : ''}${isOpened ? ' cleared' : ''}`);
 
-            // 1) Surface base + texture
+            // Surface
             card.appendChild(mk('div', 'advent-card-surface'));
 
-            // 2) Reward (under everything)
+            // Reward (under scratch)
             const reward = mk('div', 'advent-reward-content');
             reward.innerHTML = `
                 <div class="reward-icon">${r.icon}</div>
@@ -43,18 +42,11 @@ const adventApp = (() => {
                 <div class="reward-promo">${r.promo}</div>`;
             card.appendChild(reward);
 
-            // 3) Holographic layers (only visible when unlocked)
-            card.appendChild(mk('div', 'advent-holo-wash'));
-            card.appendChild(mk('div', 'advent-holo-prism'));
-            card.appendChild(mk('div', 'advent-holo-sheen'));
-            card.appendChild(mk('div', 'advent-sparkle-layer'));
-            card.appendChild(mk('div', 'advent-edge-glow'));
-
-            // 4) Canvas for scratching
+            // Canvas
             const canvas = mk('canvas', 'advent-scratch-canvas');
             card.appendChild(canvas);
 
-            // 5) Cover overlay (locked: "🔒 Приходи завтра", unlocked: "? Сотри слой!")
+            // Cover
             const cover = mk('div', 'advent-cover-layer');
             cover.innerHTML = `
                 <div class="advent-day-number">${r.day}</div>
@@ -65,20 +57,19 @@ const adventApp = (() => {
             wrap.appendChild(card);
             grid.appendChild(wrap);
 
-            // Init scratch for unlocked, un-opened days
             if (isUnlocked && !isOpened) {
                 requestAnimationFrame(() => initScratch(canvas, r.day, cover));
             }
         });
 
-        startHolographicEngine();
+        initTilt();
     }
 
-    // ─── Scratch-off with textured canvas ─────────────
+    // ─── EASY scratch-off ─────────────────────────────
     function initScratch(canvas, day, coverDiv) {
         const ctx = canvas.getContext('2d', { willReadFrequently: true });
-        let isDrawing = false;
-        let isRevealed = false;
+        let drawing = false;
+        let revealed = false;
 
         const blues = {
             1: ['#0d1b3e', '#1a3565'],
@@ -100,7 +91,6 @@ const adventApp = (() => {
             ctx.scale(dpr, dpr);
             const w = rect.width, h = rect.height;
 
-            // Gradient base
             const g = ctx.createLinearGradient(0, 0, w * 0.4, h);
             const c = blues[day] || blues[1];
             g.addColorStop(0, c[0]);
@@ -108,35 +98,25 @@ const adventApp = (() => {
             ctx.fillStyle = g;
             ctx.fillRect(0, 0, w, h);
 
-            // Brushed metal lines
-            ctx.strokeStyle = 'rgba(255,255,255,0.025)';
-            ctx.lineWidth = 0.5;
-            for (let y = 0; y < h; y += 3) {
-                ctx.beginPath();
-                ctx.moveTo(0, y + (Math.random() - 0.5) * 0.5);
-                ctx.lineTo(w, y + (Math.random() - 0.5) * 0.5);
-                ctx.stroke();
-            }
-
-            // Noise grains
-            for (let i = 0; i < 500; i++) {
-                ctx.fillStyle = `rgba(255,255,255,${Math.random() * 0.05})`;
+            // Subtle noise for texture
+            for (let i = 0; i < 300; i++) {
+                ctx.fillStyle = `rgba(255,255,255,${Math.random() * 0.04})`;
                 ctx.fillRect(Math.random() * w, Math.random() * h, 1, 1);
             }
 
-            // Question mark
+            // "?"
             ctx.fillStyle = 'rgba(255,255,255,0.5)';
-            ctx.font = `bold ${Math.min(w, h) * 0.3}px 'Outfit', sans-serif`;
+            ctx.font = `bold ${Math.min(w, h) * 0.28}px 'Outfit', sans-serif`;
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.fillText('?', w / 2, h / 2 - 4);
 
-            // Hint text
+            // Hint
             ctx.font = "500 9px 'Outfit', sans-serif";
             ctx.fillStyle = 'rgba(255,255,255,0.35)';
             ctx.fillText('Сотри пальцем', w / 2, h - 12);
 
-            // Day number badge
+            // Day badge
             const bx = w - 30, by = 6, bs = 22;
             ctx.fillStyle = 'rgba(255,255,255,0.1)';
             roundRect(ctx, bx, by, bs, bs, 7);
@@ -145,13 +125,11 @@ const adventApp = (() => {
             ctx.font = "bold 10px 'Outfit', sans-serif";
             ctx.fillText(String(day), bx + bs / 2, by + bs / 2 + 1);
 
-            // Hide HTML cover — canvas is primary
             coverDiv.style.opacity = '0';
         }
 
-        setTimeout(paint, 100);
+        setTimeout(paint, 80);
 
-        // Touch / Mouse
         function pos(e) {
             const r = canvas.getBoundingClientRect();
             const cx = e.touches ? e.touches[0].clientX : e.clientX;
@@ -162,15 +140,15 @@ const adventApp = (() => {
         let lastPos = null;
 
         function scratch(e) {
-            if (!isDrawing || isRevealed) return;
+            if (!drawing || revealed) return;
             e.preventDefault();
             const p = pos(e);
 
             ctx.globalCompositeOperation = 'destination-out';
 
-            // Draw thick strokes between last and current position for smooth scratching
             if (lastPos) {
-                ctx.lineWidth = 28;
+                // Big thick stroke for EASY scratching
+                ctx.lineWidth = 40;
                 ctx.lineCap = 'round';
                 ctx.lineJoin = 'round';
                 ctx.beginPath();
@@ -179,38 +157,39 @@ const adventApp = (() => {
                 ctx.stroke();
             } else {
                 ctx.beginPath();
-                ctx.arc(p.x, p.y, 14, 0, Math.PI * 2);
+                ctx.arc(p.x, p.y, 22, 0, Math.PI * 2);
                 ctx.fill();
             }
             lastPos = p;
-
             checkReveal();
         }
 
+        // Very low threshold for easy reveal
         const checkReveal = debounce(() => {
-            if (isRevealed) return;
+            if (revealed) return;
             const img = ctx.getImageData(0, 0, canvas.width, canvas.height);
             const d = img.data;
             let clear = 0;
-            const step = 20;
+            const step = 24;
             for (let i = 3; i < d.length; i += step) {
                 if (d[i] < 30) clear++;
             }
-            if ((clear / (d.length / step)) > 0.38) {
-                isRevealed = true;
+            // Only 25% needs to be cleared
+            if ((clear / (d.length / step)) > 0.25) {
+                revealed = true;
                 revealDay(day);
             }
-        }, 70);
+        }, 50);
 
-        canvas.addEventListener('mousedown', e => { isDrawing = true; lastPos = null; scratch(e); });
+        canvas.addEventListener('mousedown', e => { drawing = true; lastPos = null; scratch(e); });
         canvas.addEventListener('mousemove', scratch);
-        window.addEventListener('mouseup', () => { isDrawing = false; lastPos = null; });
-        canvas.addEventListener('touchstart', e => { isDrawing = true; lastPos = null; scratch(e); }, { passive: false });
+        window.addEventListener('mouseup', () => { drawing = false; lastPos = null; });
+        canvas.addEventListener('touchstart', e => { drawing = true; lastPos = null; scratch(e); }, { passive: false });
         canvas.addEventListener('touchmove', scratch, { passive: false });
-        window.addEventListener('touchend', () => { isDrawing = false; lastPos = null; });
+        window.addEventListener('touchend', () => { drawing = false; lastPos = null; });
     }
 
-    // ─── Reveal animation + confetti ──────────────────
+    // ─── Reveal ───────────────────────────────────────
     function revealDay(day) {
         localStorage.setItem(`adventOpenedDay${day}`, 'true');
         const wrap = document.getElementById(`advent-card-${day}`);
@@ -256,63 +235,71 @@ const adventApp = (() => {
         }
     }
 
-    // ─── Holographic engine (gradient-only, no tilt) ──
-    function startHolographicEngine() {
+    // ─── Subtle physical tilt (very gentle) ───────────
+    function initTilt() {
         const modal = document.getElementById('advent-modal');
         if (!modal) return;
 
-        let targetX = 50, targetY = 50;
-        let curX = 50, curY = 50;
+        let targetTiltX = 0;  // front-back
+        let targetTiltY = 0;  // left-right
+        let curTiltX = 0;
+        let curTiltY = 0;
         let rafId = null;
 
+        const MAX_TILT = 3; // Very subtle — max 3 degrees
+
         function loop() {
-            // Smooth ease toward target
-            curX += (targetX - curX) * 0.08;
-            curY += (targetY - curY) * 0.08;
+            curTiltX += (targetTiltX - curTiltX) * 0.06;
+            curTiltY += (targetTiltY - curTiltY) * 0.06;
 
-            const cards = modal.querySelectorAll('.advent-card');
-            const lx = curX.toFixed(2);
-            const ly = curY.toFixed(2);
-
+            const cards = modal.querySelectorAll('.advent-card:not(.cleared)');
             for (const card of cards) {
-                card.style.setProperty('--lx', lx);
-                card.style.setProperty('--ly', ly);
+                card.style.setProperty('--tilt-x', curTiltX.toFixed(2));
+                card.style.setProperty('--tilt-y', curTiltY.toFixed(2));
             }
 
             rafId = requestAnimationFrame(loop);
         }
 
-        if (rafId) cancelAnimationFrame(rafId);
         rafId = requestAnimationFrame(loop);
 
-        // Mouse movement → gradient position
-        modal.addEventListener('mousemove', e => {
-            const r = modal.getBoundingClientRect();
-            targetX = ((e.clientX - r.left) / r.width) * 100;
-            targetY = ((e.clientY - r.top) / r.height) * 100;
-        });
-
-        // Device orientation → gradient position (phone tilt)
+        // Device orientation for phone tilt
         if (window.DeviceOrientationEvent) {
-            const tryPermission = () => {
+            const tryPerm = () => {
                 if (typeof DeviceOrientationEvent.requestPermission === 'function') {
                     DeviceOrientationEvent.requestPermission().catch(() => { });
                 }
             };
-            modal.addEventListener('touchstart', tryPermission, { once: true });
+            modal.addEventListener('touchstart', tryPerm, { once: true });
 
             window.addEventListener('deviceorientation', e => {
                 if (e.gamma == null || e.beta == null) return;
-                // gamma: left/right tilt, beta: front/back tilt
-                targetX = clamp(50 + (e.gamma / 25) * 50, 0, 100);
-                targetY = clamp(50 + ((e.beta - 40) / 25) * 50, 0, 100);
+                // gamma: -90..90 (left-right), beta: -180..180 (front-back)
+                // Map to very subtle range
+                targetTiltY = clamp((e.gamma / 45) * MAX_TILT, -MAX_TILT, MAX_TILT);
+                targetTiltX = clamp(((e.beta - 40) / 45) * -MAX_TILT, -MAX_TILT, MAX_TILT);
             });
         }
 
-        // Auto-pause when modal is hidden
+        // Mouse fallback: very subtle tilt on hover
+        modal.addEventListener('mousemove', e => {
+            const r = modal.getBoundingClientRect();
+            const nx = ((e.clientX - r.left) / r.width - 0.5) * 2;  // -1 to 1
+            const ny = ((e.clientY - r.top) / r.height - 0.5) * 2;
+            targetTiltY = nx * MAX_TILT;
+            targetTiltX = -ny * MAX_TILT;
+        });
+
+        modal.addEventListener('mouseleave', () => {
+            targetTiltX = 0;
+            targetTiltY = 0;
+        });
+
+        // Pause/resume on modal visibility
         const obs = new MutationObserver(() => {
             if (modal.classList.contains('hidden')) {
                 if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+                targetTiltX = 0; targetTiltY = 0; curTiltX = 0; curTiltY = 0;
             } else if (!rafId) {
                 rafId = requestAnimationFrame(loop);
             }
@@ -320,7 +307,7 @@ const adventApp = (() => {
         obs.observe(modal, { attributes: true, attributeFilter: ['class'] });
     }
 
-    // ─── Utilities ────────────────────────────────────
+    // ─── Utils ────────────────────────────────────────
     function mk(tag, cls) {
         const el = document.createElement(tag);
         if (cls) el.className = cls;
@@ -364,10 +351,7 @@ const adventApp = (() => {
                 init();
             } else {
                 const btn = document.querySelector('.advent-test-btn');
-                if (btn) {
-                    btn.style.opacity = '0.5';
-                    setTimeout(() => (btn.style.opacity = '1'), 500);
-                }
+                if (btn) { btn.style.opacity = '0.5'; setTimeout(() => btn.style.opacity = '1', 500); }
             }
         }
     };
