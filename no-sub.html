@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Доступ ограничен</title>
+    <!-- Telegram Web App SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+    <!-- Modern Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Main Styles -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" type="image/jpeg" href="logo.jpg">
+    <script>
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    </script>
+    <style>
+        body,
+        html,
+        #app {
+            height: 100vh;
+            overflow: hidden;
+            background: var(--bg-main);
+        }
+
+        .no-sub-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            padding: 0 24px;
+            text-align: center;
+            animation: fadeInPage 0.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+            position: relative;
+            z-index: 10;
+        }
+
+        .restriction-icon {
+            width: 120px;
+            height: 120px;
+            margin-bottom: 30px;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .restriction-icon .glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, rgba(77, 139, 245, 0.3) 0%, transparent 70%);
+            z-index: 1;
+            animation: pulse-glow 3s infinite alternate;
+        }
+
+        @keyframes pulse-glow {
+            from {
+                transform: translate(-50%, -50%) scale(0.9);
+                opacity: 0.8;
+            }
+
+            to {
+                transform: translate(-50%, -50%) scale(1.2);
+                opacity: 1;
+            }
+        }
+
+        .restriction-icon svg {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            height: 100%;
+            filter: drop-shadow(0 8px 16px rgba(77, 139, 245, 0.25));
+        }
+
+        /* Restriction Animation sequence */
+        .restr-circle {
+            stroke-dasharray: 260;
+            stroke-dashoffset: 260;
+            animation: draw-circle 1.2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
+
+        .restr-slash {
+            stroke-dasharray: 100;
+            stroke-dashoffset: 100;
+            animation: draw-slash 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.8s forwards;
+        }
+
+        @keyframes draw-circle {
+            to {
+                stroke-dashoffset: 0;
+            }
+        }
+
+        @keyframes draw-slash {
+            to {
+                stroke-dashoffset: 0;
+            }
+        }
+
+        .no-sub-title {
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 16px;
+            letter-spacing: -0.5px;
+        }
+
+        .no-sub-desc {
+            font-size: 15px;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-bottom: 40px;
+            max-width: 300px;
+        }
+
+        @keyframes fadeInPage {
+            0% {
+                opacity: 0;
+                transform: translateY(10px) scale(0.98);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Animated background layers -->
+    <div class="bg-orb-1"></div>
+    <div class="bg-orb-2"></div>
+
+    <div id="app">
+        <main class="view active">
+            <div class="no-sub-container">
+                <div class="restriction-icon">
+                    <div class="glow"></div>
+                    <!-- Custom Blue Restriction Shield SVG logo -->
+                    <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle class="restr-circle" cx="50" cy="50" r="40" fill="url(#blueGradient)"
+                            fill-opacity="0.15" stroke="url(#blueGradient)" stroke-width="8" />
+                        <path class="restr-slash" d="M75 25L25 75" stroke="url(#blueGradient)" stroke-width="8"
+                            stroke-linecap="round" />
+                        <defs>
+                            <linearGradient id="blueGradient" x1="10" y1="10" x2="90" y2="90"
+                                gradientUnits="userSpaceOnUse">
+                                <stop stop-color="#4F8EF7" />
+                                <stop offset="1" stop-color="#2152CD" />
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                </div>
+
+                <h1 class="no-sub-title">Доступ ограничен</h1>
+                <p class="no-sub-desc">
+                    Оформите подписку, чтобы разблокировать все локации и безопасно пользоваться интернетом.
+                </p>
+
+                <button class="btn glass-btn primary-btn active-liquid wide"
+                    style="max-width: 320px; padding: 18px 24px; font-size: 16px; font-weight: 600; border-radius: 20px; box-shadow: 0 8px 24px rgba(77, 139, 245, 0.3);"
+                    onclick="closeToBot()">
+                    Оформить подписку
+                </button>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Init Telegram Mini App
+        if (window.Telegram && window.Telegram.WebApp) {
+            const tg = window.Telegram.WebApp;
+            tg.expand();
+            tg.ready();
+
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            try {
+                if (tg.isVersionAtLeast && tg.isVersionAtLeast('6.1')) {
+                    if (savedTheme === 'dark') {
+                        tg.setHeaderColor('#0a0e17');
+                        tg.setBackgroundColor('#0a0e17');
+                    } else {
+                        tg.setHeaderColor('#fafafa');
+                        tg.setBackgroundColor('#fafafa');
+                    }
+                }
+            } catch (e) {
+                console.warn('Failed to set colors:', e);
+            }
+        }
+
+        function closeToBot() {
+            if (window.Telegram && window.Telegram.WebApp) {
+                const tg = window.Telegram.WebApp;
+                tg.openTelegramLink("https://t.me/CustosVPN_Bot?start=tariffs");
+                tg.close();
+            } else {
+                window.location.href = "https://t.me/CustosVPN_Bot?start=tariffs";
+            }
+        }
+    </script>
+</body>
+
+</html>

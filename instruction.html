@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Инструкция подключения</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" type="image/jpeg" href="logo.jpg">
+    <script>
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    </script>
+    <style>
+        .highlight-quote {
+            color: var(--accent);
+            font-weight: 500;
+        }
+
+        body,
+        html,
+        #app {
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+            overflow-x: hidden;
+            overscroll-behavior-x: none;
+        }
+
+        #app {
+            animation: fadeInPage 0.4s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
+
+        @keyframes fadeInPage {
+            0% {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-orb-1"></div>
+    <div class="bg-orb-2"></div>
+    <div id="app"
+        style="overflow-y: auto; overflow-x: hidden; padding-bottom: 40px; height: 100vh; position: relative;">
+        <!-- Top Navbar Instead for back button (Optional) or just floating container -->
+        <header class="section-header" style="text-align: center; margin-top: 30px; position: relative; z-index: 10;">
+            <h2 style="font-size: 26px; font-weight: 700;">Как подключить подписку?</h2>
+            <p>Следуйте простым шагам для настройки</p>
+        </header>
+
+        <div class="content-body" style="padding: 0 20px; position: relative; z-index: 10;">
+            <div class="card glass" style="padding: 24px; border-radius: 24px; margin-bottom: 20px;">
+                <h3 style="margin-bottom: 12px; font-size: 18px; color: var(--text-main);">1. Установите приложение
+                    <span style="color: var(--accent);">Happ</span>
+                </h3>
+                <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 16px;">
+                    Скачайте и установите приложение на ваше устройство. Выберите вашу платформу:
+                </p>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                    <a href="https://apps.apple.com/us/app/happ-proxy-utility/id6475965022" target="_blank"
+                        class="btn glass-btn"
+                        style="background: var(--neutral-btn-bg); color: var(--text-main); padding: 16px 10px; font-size: 15px; border: 1px solid var(--glass-border); text-decoration: none; border-radius: 18px; display: flex; flex-direction: column; gap: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+                        <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
+                            <path
+                                d="M16.36 14.08c-.02-2.73 2.21-4.04 2.3-4.1-1.28-1.87-3.23-2.13-3.92-2.18-1.66-.17-3.25.98-4.1.98-.85 0-2.17-1-3.56-.97-1.8.03-3.48 1.05-4.42 2.68-1.89 3.28-.48 8.13 1.36 10.8 .9 1.31 1.95 2.76 3.4 2.7 1.38-.05 1.9-.89 3.56-.89 1.65 0 2.13.89 3.57.86 1.5-.03 2.4-1.34 3.29-2.65 1.03-1.5 1.45-2.96 1.48-3.03-.03-.02-2.94-1.13-2.96-4.2zm-2.58-6.1c.78-.96 1.3-2.28 1.16-3.6-1.13.05-2.5.76-3.3 1.7-.72.82-1.3 2.16-1.14 3.45 1.25.1 2.5-.66 3.28-1.55z" />
+                        </svg>
+                        <span style="font-weight: 600;">iOS</span>
+                    </a>
+                    <a href="https://play.google.com/store/apps/details?id=su.happ.app" target="_blank"
+                        class="btn glass-btn"
+                        style="background: var(--neutral-btn-bg); color: var(--text-main); padding: 16px 10px; font-size: 15px; border: 1px solid var(--glass-border); text-decoration: none; border-radius: 18px; display: flex; flex-direction: column; gap: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+                        <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
+                            <path
+                                d="M17.6 9.48l1.84-3.18c.16-.31.04-.69-.26-.85-.29-.15-.65-.06-.83.22l-1.88 3.24c-2.86-1.21-6.08-1.21-8.94 0L5.65 5.67c-.19-.29-.58-.38-.87-.22-.28.15-.4.54-.22.83L6.4 9.48C3.3 11.25 1.28 14.44 1 18h22c-.28-3.56-2.3-6.75-5.4-8.52zM7 15.25c-.69 0-1.25-.56-1.25-1.25s.56-1.25 1.25-1.25 1.25.56 1.25 1.25-.56 1.25-1.25 1.25zm10 0c-.69 0-1.25-.56-1.25-1.25s.56-1.25 1.25-1.25 1.25.56 1.25 1.25-.56 1.25-1.25 1.25z" />
+                        </svg>
+                        <span style="font-weight: 600;">Android</span>
+                    </a>
+                    <a href="https://happ.su/download/mac" target="_blank" class="btn glass-btn"
+                        style="background: var(--neutral-btn-bg); color: var(--text-main); padding: 16px 10px; font-size: 15px; border: 1px solid var(--glass-border); text-decoration: none; border-radius: 18px; display: flex; flex-direction: column; gap: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+                        <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
+                            <path
+                                d="M16.36 14.08c-.02-2.73 2.21-4.04 2.3-4.1-1.28-1.87-3.23-2.13-3.92-2.18-1.66-.17-3.25.98-4.1.98-.85 0-2.17-1-3.56-.97-1.8.03-3.48 1.05-4.42 2.68-1.89 3.28-.48 8.13 1.36 10.8 .9 1.31 1.95 2.76 3.4 2.7 1.38-.05 1.9-.89 3.56-.89 1.65 0 2.13.89 3.57.86 1.5-.03 2.4-1.34 3.29-2.65 1.03-1.5 1.45-2.96 1.48-3.03-.03-.02-2.94-1.13-2.96-4.2zm-2.58-6.1c.78-.96 1.3-2.28 1.16-3.6-1.13.05-2.5.76-3.3 1.7-.72.82-1.3 2.16-1.14 3.45 1.25.1 2.5-.66 3.28-1.55z" />
+                        </svg>
+                        <span style="font-weight: 600;">macOS</span>
+                    </a>
+                    <a href="https://happ.su/download/windows" target="_blank" class="btn glass-btn"
+                        style="background: var(--neutral-btn-bg); color: var(--text-main); padding: 16px 10px; font-size: 15px; border: 1px solid var(--glass-border); text-decoration: none; border-radius: 18px; display: flex; flex-direction: column; gap: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+                        <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
+                            <path
+                                d="M0 3.449L9.75 2.1L9.75 11.25L0 11.25L0 3.449ZM0 12.75L9.75 12.75L9.75 21.9L0 20.55L0 12.75ZM11.25 1.899L24 0L24 11.25L11.25 11.25L11.25 1.899ZM11.25 12.75L24 12.75L24 24L11.25 22.101L11.25 12.75Z" />
+                        </svg>
+                        <span style="font-weight: 600;">Windows</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="card glass" style="padding: 24px; border-radius: 24px; margin-bottom: 20px;">
+                <h3 style="margin-bottom: 12px; font-size: 18px; color: var(--text-main);">2. Скопируйте ключ</h3>
+                <p style="color: var(--text-muted); font-size: 14px; line-height: 1.5;">
+                    Вернитесь на главную страницу и нажмите синюю кнопку <span class="highlight-quote">«Скопировать
+                        ключ»</span>, чтобы сохранить его
+                    в буфер обмена.
+                </p>
+            </div>
+
+            <div class="card glass" style="padding: 24px; border-radius: 24px; margin-bottom: 20px;">
+                <h3 style="margin-bottom: 12px; font-size: 18px; color: var(--text-main);">3. Добавьте ключ в Happ</h3>
+                <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 12px; line-height: 1.5;">
+                    <b>На телефоне:</b> Откройте приложение Happ и нажмите кнопку <span
+                        class="highlight-quote">«Вставить из буфера»</span> в самом низу
+                    экрана.
+                </p>
+                <div style="height: 1px; background: var(--glass-border); margin: 10px 0;"></div>
+                <p style="color: var(--text-muted); font-size: 14px; line-height: 1.5;">
+                    <b>На ПК:</b> В левом меню выберите верхнюю кнопку <span class="highlight-quote">«Добавить
+                        (+)»</span>. У вас откроется меню добавления конфигурации, найдите строчку <span
+                        class="highlight-quote">«URL Подписки»</span> и вставьте туда ключ вашей подписки
+                </p>
+            </div>
+
+            <div class="card glass"
+                style="padding: 24px; border-radius: 24px; margin-bottom: 20px; text-align: center;">
+                <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 20px;">
+                    <div
+                        style="width: 72px; height: 72px; border-radius: 50%; background: rgba(77, 139, 245, 0.1); display: flex; align-items: center; justify-content: center; box-shadow: 0 0 20px rgba(77, 139, 245, 0.3);">
+                        <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="var(--accent)"
+                            stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 6L9 17l-5-5" />
+                        </svg>
+                    </div>
+                </div>
+                <h3 style="margin-bottom: 12px; font-size: 18px; color: var(--text-main);">4. Готово!</h3>
+                <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 20px; line-height: 1.5;">
+                    Подключитесь и наслаждайтесь свободным интернетом. Вы можете отслеживать статус подписки на главной
+                    странице.
+                </p>
+                <button class="btn glass-btn wide"
+                    style="background: var(--accent); color: white; border: none; box-shadow: 0 4px 15px rgba(77, 139, 245, 0.4);"
+                    onclick="window.history.back()">
+                    Вернуться назад
+                </button>
+            </div>
+        </div>
+    </div>
+    <script>
+        if (window.Telegram && window.Telegram.WebApp) {
+            const tg = window.Telegram.WebApp;
+            tg.expand();
+            tg.ready();
+            try {
+                if (tg.isVersionAtLeast && tg.isVersionAtLeast('6.1')) {
+                    tg.setHeaderColor('#fafafa');
+                    tg.setBackgroundColor('#fafafa');
+                }
+            } catch (e) { }
+        }
+    </script>
+</body>
+
+</html>

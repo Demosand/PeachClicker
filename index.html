@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Custos VPN</title>
+    <!-- Telegram Web App SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+    <!-- Modern Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <!-- Main Styles -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/advent.css">
+    <link rel="icon" type="image/jpeg" href="logo.jpg">
+    <script>
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        // Prevent FOUC
+        if (savedTheme === 'dark') {
+            document.documentElement.style.backgroundColor = '#0a0e17';
+        } else {
+            document.documentElement.style.backgroundColor = '#fafafa';
+        }
+    </script>
+    <style>
+        /* Loading Image with Interactive Glow */
+        .sync-icon-wrapper {
+            position: relative;
+            width: 180px;
+            height: 180px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto;
+        }
+
+        .sync-glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 140px;
+            height: 140px;
+            background: radial-gradient(circle, rgba(77, 139, 245, 0.4) 0%, transparent 70%);
+            z-index: 1;
+            border-radius: 50%;
+            animation: pulse-glow-sync 2.5s infinite alternate;
+            transition: background 0.4s ease;
+        }
+
+        /* Dark Theme Glow Adaptation */
+        html[data-theme='dark'] .sync-glow {
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.25) 0%, transparent 70%);
+        }
+
+        @keyframes pulse-glow-sync {
+            from {
+                transform: translate(-50%, -50%) scale(0.9);
+                opacity: 0.6;
+            }
+
+            to {
+                transform: translate(-50%, -50%) scale(1.15);
+                opacity: 1;
+            }
+        }
+
+        .gif-loader-container {
+            position: relative;
+            z-index: 2;
+            width: 120px;
+            height: 120px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loading-gif {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            /* Optional minimal shadow for depth */
+            filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.1));
+        }
+
+        /* Navbar animations */
+        .bottom-nav {
+            transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .bottom-nav.fade-out {
+            opacity: 0;
+            transform: translateX(-50%) translateY(20px) !important;
+            pointer-events: none;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Animated background layers -->
+    <div class="bg-orb-1"></div>
+    <div class="bg-orb-2"></div>
+
+    <div id="app">
+
+        <!-- Bottom Navbar (Floating Profile) -->
+        <nav class="bottom-nav glass" id="bottom-navbar">
+            <div class="nav-profile">
+                <img id="nav-avatar" src="logo.jpg" alt="User Avatar" class="avatar-img">
+                <div class="nav-info">
+                    <h2 id="nav-name" class="user-name">Профиль</h2>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Loading View (New Design) -->
+        <main id="loading-view" class="view active"
+            style="display: flex; align-items: center; justify-content: center; height: 100vh; padding-bottom: 60px;">
+            <div class="sync-icon-wrapper">
+                <div class="sync-glow"></div>
+                <!-- Dynamic Animated GIF Loader -->
+                <div class="gif-loader-container">
+                    <img src="load.gif" alt="Loading..." class="loading-gif" />
+                </div>
+            </div>
+        </main>
+
+        <!-- Active Subscription View -->
+        <main id="active-sub-view" class="view hidden">
+            <section class="tab-content active" style="padding-bottom: 120px; padding-top: 20px;">
+                <header class="section-header" style="text-align: center; position: relative;">
+                    <h2>Моя подписка</h2>
+                    <div class="ribbon-wrapper">
+                        <p id="sub-status-text" class="wavy-ribbon-text">Статус проверяется</p>
+                    </div>
+                </header>
+                <div class="content-body">
+
+                    <!-- Key Access Section -->
+                    <div class="card glass subscription-card key-card">
+                        <div class="key-header" style="text-align: center;">
+                            <h3>Ключ вашей подписки</h3>
+                        </div>
+                        <div class="key-image" style="display: flex; justify-content: center; margin: 20px 0;">
+                            <div style="position: relative; width: 120px; height: 120px;">
+                                <div
+                                    style="position: absolute; inset: -30px; border-radius: 50%; background: radial-gradient(circle, rgba(255, 215, 0, 0.25) 0%, rgba(255, 180, 0, 0.1) 40%, transparent 70%); pointer-events: none; z-index: 0;">
+                                </div>
+                                <img src="locked.gif" alt="Access Key"
+                                    style="position: relative; z-index: 1; width: 100%; height: 100%; object-fit: cover; border-radius: 22px;">
+                            </div>
+                        </div>
+
+                        <div class="sub-actions">
+                            <button class="btn glass-btn primary-btn wide copy-key-btn"
+                                onclick="app.copyKey()">Скопировать ключ</button>
+                            <button class="btn glass-btn wide instruction-btn"
+                                style="margin-top: 10px; background: rgba(160, 168, 185, 0.15); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); color: var(--text-main); border: 1px solid var(--glass-border); font-weight: 600;"
+                                onclick="window.location.href='instruction.html'">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    style="width: 20px; height: 20px;">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                                </svg>
+                                Инструкция
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Promotional Banner -->
+                    <div class="promo-banner" id="promo-banner"
+                        onclick="if(typeof adventApp !== 'undefined') adventApp.openModal(); else window.open('https://t.me/CustosVPN/42', '_blank')">
+                        <div class="promo-banner-image-wrapper">
+                            <img src="banner.jpg" alt="Промо баннер" class="promo-banner-img">
+                            <div class="promo-banner-overlay"></div>
+                        </div>
+                        <div class="promo-banner-badge">Адвент-календарь</div>
+                    </div>
+
+                    <!-- Current Sub -->
+                    <div class="card glass subscription-card active-sub">
+                        <div class="sub-status">Активна <span class="dot"></span></div>
+                        <h3 id="plan-name">VPN Доступ</h3>
+                        <p class="expiry" id="expiry-date">Истекает: загрузка...</p>
+
+                        <div class="usage-stats">
+                            <div class="stat-group">
+                                <div class="stat-header">
+                                    <span>ТРАФИК</span>
+                                    <span id="traffic-pct">0%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="fill" id="traffic-fill" style="width: 0%"></div>
+                                </div>
+                                <div class="stat-footer" id="traffic-text">0 / 0 GB</div>
+                            </div>
+                            <div class="stat-group">
+                                <div class="stat-header">
+                                    <span>УСТРОЙСТВА</span>
+                                    <span id="device-count">0/0</span>
+                                </div>
+                                <div class="dots-bar" id="device-dots">
+                                    <!-- Dots generated securely via JS -->
+                                </div>
+                                <div class="stat-footer" id="device-text">Ограничение проверяется</div>
+                            </div>
+                        </div>
+
+                        <!-- Queued Sub Container -->
+                        <div id="queued-sub-container" style="display: none;"></div>
+
+                        <div style="margin-top: 20px;">
+                            <button id="renew-button" class="btn glass-btn wide"
+                                style="background: #10b981; color: white; border: none; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);"
+                                onclick="app.renewSub()">Продлить</button>
+                        </div>
+                    </div>
+
+                    <!-- Devices / Support Section -->
+                    <div class="settings-list">
+                        <div class="setting-item glass" onclick="app.openDevices()">
+                            <div class="setting-info">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
+                                    <rect x="9" y="9" width="6" height="6"></rect>
+                                    <line x1="9" y1="1" x2="9" y2="4"></line>
+                                    <line x1="15" y1="1" x2="15" y2="4"></line>
+                                    <line x1="9" y1="20" x2="9" y2="23"></line>
+                                    <line x1="15" y1="20" x2="15" y2="23"></line>
+                                    <line x1="20" y1="9" x2="23" y2="9"></line>
+                                    <line x1="20" y1="14" x2="23" y2="14"></line>
+                                    <line x1="1" y1="9" x2="4" y2="9"></line>
+                                    <line x1="1" y1="14" x2="4" y2="14"></line>
+                                </svg>
+                                <span>Устройства</span>
+                            </div>
+                            <button class="btn icon-btn"><svg viewBox="0 0 24 24" fill="none">
+                                    <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round" />
+                                </svg></button>
+                        </div>
+                    </div>
+
+                    <!-- Theme Toggle Section -->
+                    <div class="settings-list" style="margin-top: 10px;">
+                        <div class="setting-item glass" onclick="app.toggleTheme()" style="cursor: pointer;">
+                            <div class="setting-info">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                                </svg>
+                                <span>Сменить тему</span>
+                            </div>
+                            <div class="theme-toggle-switch">
+                                <div class="theme-slider">
+                                    <svg class="theme-icon theme-icon-sun" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round">
+                                        <circle cx="12" cy="12" r="5"></circle>
+                                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                                    </svg>
+                                    <svg class="theme-icon theme-icon-moon" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round">
+                                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Support Section -->
+                    <div style="margin-top: 10px;">
+                        <div class="setting-item glass" onclick="app.openSupport()"
+                            style="border: 2px dashed var(--accent); cursor: pointer;">
+                            <div class="setting-info">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                                </svg>
+                                <span>Поддержка</span>
+                            </div>
+                            <button class="btn icon-btn"><svg viewBox="0 0 24 24" fill="none">
+                                    <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round" />
+                                </svg></button>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+        </main>
+        
+        <!-- Advent Calendar Modal -->
+        <div id="advent-modal" class="advent-modal hidden">
+            <div class="advent-overlay" onclick="adventApp.closeModal()"></div>
+            <div class="advent-container">
+                <div class="advent-header">
+                    <h2>Адвент-календарь</h2>
+                    <p>Входи каждый день и забирай подарки!</p>
+                    <button class="advent-close" onclick="adventApp.closeModal()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                
+                <div class="advent-grid" id="advent-grid">
+                    <!-- Days will be generated by JS -->
+                </div>
+                
+                <!-- Side Test Button -->
+                <button class="advent-test-btn" onclick="adventApp.unlockNextDay()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                    </svg>
+                    Открыть день
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script src="js/advent.js"></script>
+</body>
+
+
+</html>

@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Мои Устройства</title>
+    <!-- Telegram Web App SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <!-- Modern Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <!-- Main Styles -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" type="image/jpeg" href="logo.jpg">
+    <script>
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    </script>
+    <style>
+        .device-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px;
+            border-radius: 20px;
+            margin-bottom: 12px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity 0.4s ease,
+                max-height 0.45s cubic-bezier(0.4, 0, 0.2, 1),
+                margin-bottom 0.45s cubic-bezier(0.4, 0, 0.2, 1),
+                padding 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+            max-height: 120px;
+            overflow: hidden;
+        }
+
+        .device-item.device-removing {
+            transform: translateX(-100%) scale(0.8);
+            opacity: 0;
+            max-height: 0;
+            margin-bottom: 0;
+            padding-top: 0;
+            padding-bottom: 0;
+            border-color: transparent;
+        }
+
+        .device-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: rgba(77, 139, 245, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent);
+            margin-right: 14px;
+            flex-shrink: 0;
+        }
+
+        .device-info {
+            flex-grow: 1;
+            overflow: hidden;
+        }
+
+        .device-name {
+            font-weight: 600;
+            font-size: 16px;
+            color: var(--text-main);
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .device-date {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .delete-btn {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border: none;
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex-shrink: 0;
+            margin-left: 10px;
+        }
+
+        .delete-btn:active {
+            transform: scale(0.9);
+            background: rgba(239, 68, 68, 0.2);
+        }
+
+        body,
+        html,
+        #app {
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        #app {
+            animation: fadeInSmooth 0.4s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
+
+        @keyframes fadeInSmooth {
+            0% {
+                opacity: 0;
+                transform: scale(0.98);
+                filter: blur(4px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1);
+                filter: blur(0);
+            }
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-dialog {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 24px;
+            width: 320px;
+            max-width: 90%;
+            text-align: center;
+            transform: translateY(20px) scale(0.95);
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-overlay.active .modal-dialog {
+            transform: translateY(0) scale(1);
+        }
+
+        .modal-icon {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 16px;
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-dialog h3 {
+            margin-bottom: 8px;
+            color: var(--text-main);
+            font-size: 20px;
+        }
+
+        .modal-dialog p {
+            color: var(--text-muted);
+            font-size: 15px;
+            margin-bottom: 24px;
+            line-height: 1.4;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn-cancel {
+            flex: 1;
+            background: rgba(160, 168, 185, 0.15);
+            color: var(--text-main);
+            border: none;
+            padding: 14px 0;
+            border-radius: 16px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-confirm {
+            flex: 1;
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 14px 0;
+            border-radius: 16px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-muted);
+        }
+
+        /* Spinner inside confirm button */
+        .btn-confirm.loading {
+            pointer-events: none;
+            opacity: 0.85;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-confirm .spinner-svg {
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-orb-1"></div>
+    <div class="bg-orb-2"></div>
+
+    <div id="app" style="overflow-y: auto; overflow-x: hidden; height: 100vh; position: relative;">
+        <!-- Header -->
+        <header class="section-header" style="text-align: center; margin-top: 30px; position: relative; z-index: 10;">
+            <h2 style="font-size: 26px; font-weight: 700;">Ваши устройства</h2>
+            <p>Управление активными сессиями</p>
+        </header>
+
+        <div class="content-body" style="padding: 0 20px 100px; position: relative; z-index: 10;"
+            id="devices-container">
+            <!-- Loading -->
+            <div style="text-align: center; margin-top: 50px;">
+                <div class="loader" style="margin-bottom: 16px;"></div>
+                <p style="color: var(--text-muted);">Загрузка устройств...</p>
+            </div>
+        </div>
+
+        <!-- Back button (fixed at bottom like the main nav) -->
+        <nav class="bottom-nav glass"
+            style="justify-content: center; background: rgba(255,255,255,0.2) !important; cursor: pointer;"
+            onclick="appDevices.goBack()">
+            <div style="display: flex; align-items: center; gap: 8px; font-weight: 600; color: var(--text-main);">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+                Назад
+            </div>
+        </nav>
+    </div>
+
+    <!-- Confirm Modal -->
+    <div class="modal-overlay" id="delete-modal">
+        <div class="modal-dialog">
+            <div class="modal-icon">
+                <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="3 6 5 6 21 6"></polyline>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    <line x1="10" y1="11" x2="10" y2="17"></line>
+                    <line x1="14" y1="11" x2="14" y2="17"></line>
+                </svg>
+            </div>
+            <h3>Удалить устройство?</h3>
+            <p>Вы действительно хотите удалить это устройство из подписки?</p>
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="appDevices.closeModal()">Отмена</button>
+                <button class="btn-confirm" id="confirm-delete-btn">Удалить</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/devices.js"></script>
+</body>
+
+</html>

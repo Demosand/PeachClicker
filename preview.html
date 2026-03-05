@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Preview — Active + Queued Subscription</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" type="image/jpeg" href="logo.jpg">
+    <script>
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    </script>
+</head>
+
+<body>
+    <div class="bg-orb-1"></div>
+    <div class="bg-orb-2"></div>
+
+    <div id="app">
+
+        <!-- Bottom Navbar -->
+        <nav class="bottom-nav glass" id="bottom-navbar">
+            <div class="nav-profile">
+                <img id="nav-avatar" src="logo.jpg" alt="User Avatar" class="avatar-img">
+                <div class="nav-info">
+                    <h2 id="nav-name" class="user-name">Артём</h2>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Active Subscription View -->
+        <main id="active-sub-view" class="view active">
+            <section class="tab-content active" style="padding-bottom: 120px; padding-top: 20px;">
+                <header class="section-header" style="text-align: center; position: relative;">
+                    <h2>Моя подписка</h2>
+                    <div class="ribbon-wrapper">
+                        <p class="wavy-ribbon-text" style="color: #10b981;">Ваши данные защищены</p>
+                    </div>
+                </header>
+                <div class="content-body">
+
+                    <!-- Key Access Section -->
+                    <div class="card glass subscription-card key-card">
+                        <div class="key-header" style="text-align: center;">
+                            <h3>Ключ вашей подписки</h3>
+                        </div>
+                        <div class="key-image" style="display: flex; justify-content: center; margin: 20px 0;">
+                            <div
+                                style="position: relative; width: 120px; height: 120px; background: white; border-radius: 22px; overflow: hidden;">
+                                <div
+                                    style="position: absolute; inset: -15px; border-radius: 50%; background: radial-gradient(circle, rgba(255, 215, 0, 0.25) 0%, rgba(255, 180, 0, 0.1) 40%, transparent 70%); pointer-events: none; z-index: 0;">
+                                </div>
+                                <img src="locked.gif" alt="Access Key"
+                                    style="position: relative; z-index: 1; width: 100%; height: 100%; object-fit: cover;">
+                            </div>
+                        </div>
+                        <div class="sub-actions">
+                            <button class="btn glass-btn primary-btn wide copy-key-btn">Скопировать ключ</button>
+                            <button class="btn glass-btn wide instruction-btn"
+                                style="margin-top: 10px; background: rgba(160, 168, 185, 0.15); backdrop-filter: blur(15px); color: var(--text-main); border: 1px solid var(--glass-border); font-weight: 600;">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    style="width: 20px; height: 20px;">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                                </svg>
+                                Инструкция
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Current Sub -->
+                    <div class="card glass subscription-card active-sub">
+                        <div class="sub-status">Активна <span class="dot"></span></div>
+                        <h3>🚀 Base</h3>
+                        <p class="expiry">Истекает: 25 марта 2026 г.</p>
+
+                        <div class="usage-stats">
+                            <div class="stat-group">
+                                <div class="stat-header">
+                                    <span>ТРАФИК</span>
+                                    <span>∞</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="fill" style="width: 3%"></div>
+                                </div>
+                                <div class="stat-footer">33.15 GB использовано</div>
+                            </div>
+                            <div class="stat-group">
+                                <div class="stat-header">
+                                    <span>УСТРОЙСТВА</span>
+                                    <span>2/2</span>
+                                </div>
+                                <div class="dots-bar">
+                                    <div class="dot active"></div>
+                                    <div class="dot active"></div>
+                                </div>
+                                <div class="stat-footer">Лимит исчерпан</div>
+                            </div>
+                        </div>
+
+                        <!-- =============== QUEUED SUBSCRIPTION INFO =============== -->
+                        <div id="queued-sub-container">
+                            <div style="
+                                margin-top: 16px;
+                                padding: 20px;
+                                border-radius: 20px;
+                                background: linear-gradient(135deg, rgba(16, 185, 129, 0.06) 0%, rgba(16, 185, 129, 0.02) 100%);
+                                border: 1px solid rgba(16, 185, 129, 0.2);
+                                backdrop-filter: blur(12px);
+                                -webkit-backdrop-filter: blur(12px);
+                                position: relative;
+                                overflow: hidden;
+                            ">
+                                <!-- Subtle green glow -->
+                                <div style="
+                                    position: absolute; top: -20px; right: -20px;
+                                    width: 80px; height: 80px;
+                                    background: radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, transparent 70%);
+                                    pointer-events: none;
+                                "></div>
+
+                                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 14px;">
+                                    <div style="
+                                        width: 40px; height: 40px;
+                                        border-radius: 12px;
+                                        background: rgba(16, 185, 129, 0.12);
+                                        display: flex; align-items: center; justify-content: center;
+                                        flex-shrink: 0;
+                                    ">
+                                        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#10b981"
+                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <circle cx="12" cy="12" r="10"></circle>
+                                            <polyline points="12 6 12 12 16 14"></polyline>
+                                        </svg>
+                                    </div>
+                                    <div style="flex-grow: 1;">
+                                        <div
+                                            style="font-weight: 700; font-size: 15px; color: var(--text-main); letter-spacing: -0.3px;">
+                                            Следующая: 🚀 Base
+                                        </div>
+                                        <div
+                                            style="font-size: 13px; color: #10b981; font-weight: 600; margin-top: 2px;">
+                                            +30 дней
+                                        </div>
+                                    </div>
+                                    <div style="
+                                        padding: 4px 10px;
+                                        border-radius: 20px;
+                                        background: rgba(16, 185, 129, 0.1);
+                                        color: #10b981;
+                                        font-size: 10px;
+                                        font-weight: 700;
+                                        letter-spacing: 0.5px;
+                                        white-space: nowrap;
+                                        margin-left: auto;
+                                        flex-shrink: 0;
+                                    ">В ОЧЕРЕДИ</div>
+                                </div>
+
+                                <div style="
+                                    font-size: 13px;
+                                    color: var(--text-muted);
+                                    line-height: 1.5;
+                                    padding-left: 52px;
+                                ">Подписка автоматически активируется после окончания текущей.</div>
+                            </div>
+                        </div>
+                        <!-- =============== END QUEUED =============== -->
+
+                        <div style="margin-top: 20px;">
+                            <!-- Dashed green "Продлена" button -->
+                            <button class="btn glass-btn wide" style="
+                                background: transparent;
+                                color: #10b981;
+                                border: 2px dashed #10b981;
+                                box-shadow: 0 0 20px rgba(16, 185, 129, 0.08);
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                pointer-events: none;
+                            ">
+                                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#10b981"
+                                    stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
+                                    style="margin-right: 6px;">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                                Продлена
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Devices -->
+                    <div class="settings-list">
+                        <div class="setting-item glass">
+                            <div class="setting-info">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
+                                    <rect x="9" y="9" width="6" height="6"></rect>
+                                    <line x1="9" y1="1" x2="9" y2="4"></line>
+                                    <line x1="15" y1="1" x2="15" y2="4"></line>
+                                    <line x1="9" y1="20" x2="9" y2="23"></line>
+                                    <line x1="15" y1="20" x2="15" y2="23"></line>
+                                    <line x1="20" y1="9" x2="23" y2="9"></line>
+                                    <line x1="20" y1="14" x2="23" y2="14"></line>
+                                    <line x1="1" y1="9" x2="4" y2="9"></line>
+                                    <line x1="1" y1="14" x2="4" y2="14"></line>
+                                </svg>
+                                <span>Устройства</span>
+                            </div>
+                            <button class="btn icon-btn"><svg viewBox="0 0 24 24" fill="none">
+                                    <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round" />
+                                </svg></button>
+                        </div>
+                    </div>
+
+                    <!-- Theme Toggle Section -->
+                    <div class="settings-list" style="margin-top: 10px;">
+                        <div class="setting-item glass" onclick="app.toggleTheme()" style="cursor: pointer;">
+                            <div class="setting-info">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                                </svg>
+                                <span>Сменить тему</span>
+                            </div>
+                            <div class="theme-toggle-switch">
+                                <div class="theme-slider">
+                                    <svg class="theme-icon theme-icon-sun" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round">
+                                        <circle cx="12" cy="12" r="5"></circle>
+                                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                                    </svg>
+                                    <svg class="theme-icon theme-icon-moon" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round">
+                                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Support -->
+                    <div style="margin-top: 10px;">
+                        <div class="setting-item glass" style="border: 2px dashed var(--accent); cursor: pointer;">
+                            <div class="setting-info">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                                </svg>
+                                <span>Поддержка</span>
+                            </div>
+                            <button class="btn icon-btn"><svg viewBox="0 0 24 24" fill="none">
+                                    <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round" />
+                                </svg></button>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+        </main>
+
+    </div>
+</body>
+
+</html>
